@@ -1,0 +1,36 @@
+{
+  "name": "telegram-api",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@elrondnetwork/erdjs": "^8.0.1-alpha.13",
+    "@elrondnetwork/erdwalletjs-cli": "^1.0.1",
+    "axios": "^0.24.0",
+    "bignumber.js": "^9.0.2",
+    "buffer": "^6.0.3",
+    "dotenv": "^16.0.0",
+    "graphql": "^16.3.0",
+    "graphql-request": "^4.0.0",
+    "input": "^1.0.1",
+    "nodemon": "^2.0.15"
+  },
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@elrondnetwork/elrond-pem": "^1.0.2",
+    "webpack-cli": "^4.9.1"
+  }
+}
