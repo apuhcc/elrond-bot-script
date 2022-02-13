@@ -13,8 +13,6 @@ const {
 const { generateWalletKey } = require("./create-pem");
 const {
   getHexValue,
-  getDecimalFromHex,
-  getHexNumberValue,
 } = require("./utilities");
 const {
   getSwapPoolInfo,
@@ -22,11 +20,14 @@ const {
   getTransactionStatus,
   getTokenBalance
 } = require("./apis");
+
+const { PROVIDER_URL, WRAPPED_EGLD_IDENTIFIER} = require('./constants');
+
 const pem = generateWalletKey();
 
 let signer = new UserSigner(UserSecretKey.fromPem(pem));
 
-let provider = new ProxyProvider("https://gateway.elrond.com");
+let provider = new ProxyProvider(PROVIDER_URL);
 
 const account = new Account(signer.getAddress());
 
@@ -36,7 +37,6 @@ try {
   console.log(error);
 }
 
-const WRAPPED_EGLD_IDENTIFIER = "WEGLD-bd4d79";
 
 const createTransaction = (
   firstTokenIdentifier,
@@ -77,6 +77,8 @@ const createSellTransaction = async (
   slippage = 0.01,
   minSellPrice
 ) => {
+  try {
+
   const {
     firstToken: token,
     address,
@@ -84,13 +86,15 @@ const createSellTransaction = async (
   } = await getSwapPoolInfo(tokenName);
 
   let valueToSwap = getHexValue(tokenToExchange, token.decimals);
-  console.log(`Current price ${swapPrice}`);
+  console.log(`Current price ${swapPrice} EGLD`);
   console.log(`Number of tokens to sell ${tokenToExchange}`);
 
   if (minSellPrice && swapPrice < minSellPrice) {
     console.log(
       "Current price does not match desired sell price",
-      minSellPrice
+      minSellPrice,
+      "EGLD",
+      new Date()
     );
     setTimeout(() => {
       createSellTransaction(
@@ -100,7 +104,7 @@ const createSellTransaction = async (
         slippage,
         minSellPrice
       );
-    }, 1000);
+    }, 2000);
 
     return;
   }
@@ -124,6 +128,19 @@ const createSellTransaction = async (
     totalEGLDToReceive,
     address
   );
+  }
+  catch(e) {
+    console.log(e)
+    setTimeout(() => {
+      createSellTransaction(
+        tokenName,
+        tokenToExchange,
+        minEGLDValue,
+        slippage,
+        minSellPrice
+      );
+    }, 2000);
+  }
 };
 
 const createBuyTransaction = async (

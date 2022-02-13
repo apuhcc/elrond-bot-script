@@ -1,7 +1,7 @@
 const { request, gql } = require("graphql-request");
 const axios = require("axios");
 const { getDecimalFromHex } = require("./utilities");
-const WRAPPED_EGLD_IDENTIFIER = "WEGLD-bd4d79";
+const { PROVIDER_URL, WRAPPED_EGLD_IDENTIFIER, GRAPHQL_URL} = require('./constants');
 
 const query = gql`
   {
@@ -41,7 +41,7 @@ const getTransactionStatus = async (hash) => {
     const interval = setInterval(async () => {
       try {
         const result = await axios.get(
-          `https://gateway.elrond.com/transaction/${hash}?withResults=true`
+          `${PROVIDER_URL}/transaction/${hash}?withResults=true`
         );
         console.log(result.data.data.transaction.status);
         if (result.data.data.transaction.status === "pending") {
@@ -76,7 +76,7 @@ const getTransactionStatus = async (hash) => {
 
 const getActivePools = async () => {
   const data = await request({
-    url: "https://graph.maiar.exchange/graphql",
+    url: GRAPHQL_URL,
     document: query,
     variables: { offset: 0, pairsLimit: 500 },
   });
@@ -85,7 +85,7 @@ const getActivePools = async () => {
 
 const getAvailablePools = async () => {
   const data = await request({
-    url: "https://graph.maiar.exchange/graphql",
+    url: GRAPHQL_URL,
     document: query,
     variables: { offset: 0, pairsLimit: 500 },
   });
@@ -96,7 +96,7 @@ const getAvailablePools = async () => {
 
 const getTokenBalance = async (identifier, address) => {
   const response = await axios.get(
-    `https://gateway.elrond.com/address/${address}/esdt/${identifier}`
+    `${PROVIDER_URL}/address/${address}/esdt/${identifier}`
   );
   return getDecimalFromHex(response.data.data.tokenData.balance);
 };
